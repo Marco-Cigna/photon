@@ -13,6 +13,18 @@
 
 out vec2 uv;
 
+#if MC_VERSION >= 260100 && defined IS_IRIS
+// The glint is drawn into the translucent layer after lighting, so it is lit
+// here like the surface under it (see gbuffers_armor_glint.fsh)
+out vec2 light_levels;
+flat out vec3 light_color;
+flat out vec3 ambient_color;
+
+uniform sampler2D colortex4; // Sky map, lighting colors
+
+uniform ivec2 eyeBrightnessSmooth;
+#endif
+
 uniform sampler2D noisetex;
 
 uniform mat4 gbufferModelView;
@@ -39,6 +51,25 @@ uniform vec3 light_dir;
 void main() {
     uv = mat2(gl_TextureMatrix[0]) * gl_MultiTexCoord0.xy +
         gl_TextureMatrix[0][3].xy;
+
+#if MC_VERSION >= 260100 && defined IS_IRIS
+    light_levels = clamp01(gl_MultiTexCoord1.xy * rcp(240.0));
+
+    // The glint render type is drawn full-bright, so its own lightmap carries
+    // no information: use the light at the player instead, which is right for
+    // held items and worn armor in first person, and close enough for the
+    // entities around the player
+    if (min_of(light_levels) > 0.99) {
+        light_levels = clamp01(vec2(eyeBrightnessSmooth) * rcp(240.0));
+    }
+
+    light_color = texelFetch(colortex4, ivec2(191, 0), 0).rgb;
+#if defined WORLD_OVERWORLD && defined SH_SKYLIGHT
+    ambient_color = texelFetch(colortex4, ivec2(191, 11), 0).rgb;
+#else
+    ambient_color = texelFetch(colortex4, ivec2(191, 1), 0).rgb;
+#endif
+#endif
 
     vec3 pos = transform(gl_ModelViewMatrix, gl_Vertex.xyz);
     pos = view_to_scene_space(pos);
