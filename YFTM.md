@@ -8,6 +8,7 @@ Minecraft 26.1.2 / Iris 1.11.4 / Voxy setup.
 |---|---|
 | Enchantment glint lit like a surface on 26.1+ (it washed held items out to a see-through purple and glowed at night) | `fix/glint-26.1` |
 | Backport of upstream #609: translucent entity draws (glint, the A-10's nozzle glow, JEG cockpit screens) no longer vanish in front of Voxy LOD terrain | `fix/voxy-translucent-entities` |
+| Entity shadows off by default and in the High profile (Ultra keeps them): with the JEG fleet in view they cost about 6 ms a frame on an RTX 3080 at 1440p (52 → 76 fps, 2026-11-26; remeasured with the JEG vehicle glass and glow drawing again: 46 → 82 fps, and 59 → 101 with JEG yftm.28's vehicle culling). Only players who never set the option themselves get the new default | `yftm` |
 
 ## Releasing
 

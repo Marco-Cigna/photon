@@ -124,7 +124,9 @@ const float wetnessHalflife         = 70.0;
   #define SHADOW_COLOR
   #define SHADOW_VPS
   #define SHADOW_PENUMBRA_SCALE 1.0 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
-  #define ENTITY_SHADOWS
+  // yftm: entity shadows off by default (and in the High profile): JEG vehicles drawn into the shadow map cost about
+  // 6 ms a frame with a fleet in view (2026-11-26). Players can still turn them on under Shadows.
+//#define ENTITY_SHADOWS
 //#define BLOCK_ENTITY_SHADOWS
 //#define PIXELATED_SHADOWS
   #define PIXELATED_SHADOWS_RESOLUTION 16 // [4 8 16 32 64 128 256]
