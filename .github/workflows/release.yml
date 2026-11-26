@@ -1,0 +1,31 @@
+name: Release
+
+# Pushing a tag such as v1.3b-yftm.2 publishes photon-yftm.zip as a GitHub release, which the
+# Yearn for the Mines pack manager follows like the pack's other GitHub forks (see YFTM.md).
+on:
+  push:
+    tags: ['v*-yftm.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Package the shader pack
+        # Same layout as Photon's own releases: shaders/ and the licence at the root of the zip
+        # (the licence must ship with every copy). The file name never changes between releases:
+        # Iris keys a pack's settings to its file name, so a versioned name would reset everyone's
+        # Photon options and switch shaders off at every update.
+        run: |
+          printf '%s\n' "${GITHUB_REF_NAME}" > shaders/yftm-version.txt
+          zip -r -X -q photon-yftm.zip shaders LICENSE
+          unzip -l photon-yftm.zip | tail -1
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: photon-yftm.zip
+          generate_release_notes: true
